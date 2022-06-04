@@ -5,6 +5,9 @@ import TabBarMenu from './components/tabBarMenu/TabBarMenu';
 import MetricSlider from './components/metricSlider/MetricSlider';
 import './App.css';
 import ForecastTab from "./pages/forecastTab/ForecastTab";
+import {BrowserRouter as Router, Switch, Route} from 'react-router-dom'
+import TodayTab from "./pages/todayTab/TodayTab";
+
 
 
 const apiKey = 'a4703a48fc688fe98386768dca787a2c'
@@ -13,10 +16,11 @@ const apiKey = 'a4703a48fc688fe98386768dca787a2c'
 function App() {
   const [weatherData, setWeatherData] = useState({})
   const [location, setLocation] = useState('')
-  // const [coordinates, setCoordinates] = useState('')
+
 
   useEffect(() => {
   async function fetchData() {
+
     try {
       const result = await axios.get(`https://api.openweathermap.org/data/2.5/weather?q=${location}&appid=${apiKey}`)
       setWeatherData(result.data)
@@ -24,7 +28,7 @@ function App() {
       console.error(e)
     }
   }
-  if(location){
+    if(location){
     fetchData()
   }
 }, [location])
@@ -34,8 +38,7 @@ function App() {
   return (
     <>
       <div className="weather-container">
-
-        {/*HEADER -------------------- */}
+               {/*HEADER -------------------- */}
         <div className="weather-header">
           <SearchBar setLocationHandler={setLocation} />
 
@@ -52,13 +55,26 @@ function App() {
         </div>
 
         {/*CONTENT ------------------ */}
+        <Router>
+
         <div className="weather-content">
+
           <TabBarMenu/>
+          <Switch>
 
           <div className="tab-wrapper">
-            <ForecastTab coordinates={weatherData.coord}/>
+
+              <Route path="/komende-week">
+              <ForecastTab coordinates={weatherData.coord}/>
+                </Route>
+                  <Route path="/" exact>
+                    <TodayTab />
+               </Route>
           </div>
+          </Switch>
+
         </div>
+        </Router>
 
         <MetricSlider/>
       </div>
